@@ -106,6 +106,101 @@ class PinataV1:
         response = requests.put(base_url, headers=header,data=data)
 
         return response.status_code
+    
+    def pin_policy(self,cid,cred,region="NYC1",replications=2):
+        
+        """
+        FRA1 - Frankfurt, Germany (max 2 replications)
+        NYC1 - New York City, USA (max 2 replications)
+        """
+        
+        base_url = "https://api.pinata.cloud/pinning/hashPinPolicy"
+
+        header = {
+                  "pinata_api_key":cred["API Key"],
+                    "pinata_secret_api_key":cred["API Secret"]
+                  }
+        
+        data = {
+                "ipfsPinHash": cid,
+                "newPinPolicy": {
+                    "regions": [
+                        {
+                            "id": region,
+                            "desiredReplicationCount": replications
+                        },
+                    ]
+                }
+            }
+        
+        
+        response = requests.put(base_url, headers=header,data=data)
+
+        return response.json(),response.status_code
+        
+        
+    def globalpin_policy(self,cred,region="NYC1",replications=2):
+        
+        """
+        FRA1 - Frankfurt, Germany (max 2 replications)
+        NYC1 - New York City, USA (max 2 replications)
+        """
+        
+        base_url = "https://api.pinata.cloud/pinning/userPinPolicy"
+
+        header = {
+                  "pinata_api_key":cred["API Key"],
+                    "pinata_secret_api_key":cred["API Secret"]
+                  }
+        
+        data = {
+                "newPinPolicy": {
+                    "regions": [
+                        {
+                            "id": region,
+                            "desiredReplicationCount": replications
+                        },
+                    ]
+                }
+            }
+        
+        
+        response = requests.put(base_url, headers=header,data=data)
+
+        return response.json(),response.status_code
+    
+    
+    def get_pinned_jobs(self,cred,params):
+        
+        """
+        "sort" - Sort the results by the date added to the pinning queue (see value options below)
+        "ASC" - Sort by ascending dates
+        "DESC" - Sort by descending dates
+        "status" - Filter by the status of the job in the pinning queue (see potential statuses below)
+        "prechecking" - Pinata is running preliminary validations on your pin request.
+        "searching" - Pinata is actively searching for your content on the IPFS network. This may take some time if your content is isolated.
+        "retrieving" - Pinata has located your content and is now in the process of retrieving it.
+        "expired" - Pinata wasn't able to find your content after a day of searching the IPFS network. Please make sure your content is hosted on the IPFS network before trying to pin again.
+        "over_free_limit" - Pinning this object would put you over the free tier limit. Please add a credit card to continue pinning content.
+        "over_max_size" - This object is too large of an item to pin. If you're seeing this, please contact us for a more custom solution.
+        "invalid_object" - The object you're attempting to pin isn't readable by IPFS nodes. Please contact us if you receive this, as we'd like to better understand what you're attempting to pin.
+        "bad_host_node" - You provided a host node that was either invalid or unreachable. Please make sure all provided host nodes are online and reachable.
+        "ipfs_pin_hash" - Retrieve the record for a specific IPFS hash
+        "limit" - Limit the amount of results returned per page of results (default is 5, and max is 1000)
+        "offset" - Provide the record offset for records being returned. This is how you retrieve records on additional pages (default is 0)
+        """
+        
+        base_url = "https://api.pinata.cloud/pinning/pinJobs/"
+        
+        header = {
+                  "pinata_api_key":cred["API Key"],
+                    "pinata_secret_api_key":cred["API Secret"]
+                  }
+        
+        
+        response = requests.get(base_url, headers=header,params=params)
+
+        return response.json(),response.status_code
         
     
     def get_pinned_files(self,cred,params):
@@ -149,5 +244,21 @@ class PinataV1:
         response = requests.get(base_url, headers=header,params=params)
 
         return response.json(),response.status_code
+    
+    
+    def get_datausage(self,cred):
+                
+        header = {
+                  "pinata_api_key":cred["API Key"],
+                    "pinata_secret_api_key":cred["API Secret"]
+                  }
+        
+        base_url = "https://api.pinata.cloud/data/userPinnedDataTotal"
+        
+        
+        response = requests.get(base_url, headers=header,params=params)
+
+        return response.json(),response.status_code
+
         
         
