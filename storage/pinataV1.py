@@ -21,17 +21,28 @@ class PinataV1:
 
         header = {
                   "pinata_api_key":cred["API Key"],
-                    "pinata_secret_api_key":cred["API Secret"]
+                    "pinata_secret_api_key":cred["API Secret"],
                   }
+
+
+        f_bytes = {"file":(fn,open(fn,"rb"),'multipart/form-data')}
         
-        
-        #Filename,file, content_type, cookie expiration?
-        files = {'file': (fn, open(fn, 'rb'),
-                          "multipart/form-data", {'Expires': '0'})
+        payload = {"metadata":
+                {"pinataMetadata": {
+                        "name": "name",
+                        "keyvalues": {
+                            "customKey": 'customValue',
+                            "customKey2": 'customValue2'
+                        }
+                    },
+                    "pinataOptions": {
+                        "cidVersion": 1
+                        }
+                    }
                 }
+        
 
-
-        response = requests.post(base_url, headers=header,files=files)
+        response = requests.post(base_url, headers=header,files=f_bytes,data=payload)
 
         return response.json(),response.status_code
     
@@ -52,7 +63,9 @@ class PinataV1:
                         "name": fn,
                         "keyvalues": {}
                     },
-                    "hashToPin": cid
+                    "hashToPin": cid,
+            
+                    
             }
     
 
@@ -65,20 +78,16 @@ class PinataV1:
     #Appears in documentation, but invalid endpoint
     def unpin(self,cid,cred):
 
-        base_url = "https://api.pinata.cloud/pinning/unpin"
+        base_url = "https://api.pinata.cloud/pinning/unpin/"
 
         header = {
-                  "pinata_api_key":cred["API Key"],
-                    "pinata_secret_api_key":cred["API Secret"]
-                  }
-        
-        data = {"hashToUnpin":cid} #The hash of the content you wish to have Pinata unpin from its nodes.
-    
+          "pinata_api_key":cred["API Key"],
+            "pinata_secret_api_key":cred["API Secret"]
+          }
 
+        response = requests.delete(base_url + cid,headers=header)
 
-        response = requests.delete(base_url, headers=header,data=data)
-
-        return response.json(),response.status_code
+        return response.status_code
     
     
     #Appears in documentation, but invalid endpoint
@@ -170,7 +179,7 @@ class PinataV1:
         return response.json(),response.status_code
     
     
-    def get_pinned_jobs(self,cred,params):
+    def get_pinned_jobs(self,cred,params=None):
         
         """
         "sort" - Sort the results by the date added to the pinning queue (see value options below)
@@ -203,7 +212,7 @@ class PinataV1:
         return response.json(),response.status_code
         
     
-    def get_pinned_files(self,cred,params):
+    def get_pinned_files(self,cred,params=None):
         
         """
         Query Parameters = params
@@ -246,7 +255,11 @@ class PinataV1:
         return response.json(),response.status_code
     
     
-    def get_datausage(self,cred):
+    
+    
+ 
+    
+    def get_datausage(self,cred,params=None):
                 
         header = {
                   "pinata_api_key":cred["API Key"],
