@@ -84,8 +84,10 @@ class PinataV1:
           "pinata_api_key":cred["API Key"],
             "pinata_secret_api_key":cred["API Secret"]
           }
+        
+        params = {"hashToUnpin":cid}
 
-        response = requests.delete(base_url + cid,headers=header)
+        response = requests.delete(base_url + cid,headers=header,params=params)
 
         return response.status_code
     
