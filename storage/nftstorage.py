@@ -58,7 +58,7 @@ class NFTStorage:
         return response
 
 
-    def remove_file(self,cid,cred):
+    def unpin(self,cid,cred):
 
         base_url = f"https://api.nft.storage/{cid}"
 
