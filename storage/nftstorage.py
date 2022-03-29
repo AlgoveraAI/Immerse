@@ -16,7 +16,7 @@ class NFTStorage:
 
         return cred["NFTStorage"]
 
-    def upload_file(self,fn,cred):
+    def upload_file(self,cred,fn):
 
         base_url = "https://api.nft.storage/upload"
 
@@ -33,7 +33,7 @@ class NFTStorage:
         return response.json(),response.status_code
 
 
-    def get_file(self,cid,cred):
+    def get_file(self,cred,cid):
 
         base_url = f"https://api.nft.storage/{cid}"
 
@@ -58,7 +58,7 @@ class NFTStorage:
         return response
 
 
-    def unpin(self,cid,cred):
+    def unpin(self,cred,cid):
 
         base_url = f"https://api.nft.storage/{cid}"
 
@@ -71,7 +71,7 @@ class NFTStorage:
         return response
 
 
-    def check(self,cid,cred):
+    def check(self,cred,cid):
         header = {"Content-Type": "form-data",
                   "Authorization":"Bearer " + cred
                   }
