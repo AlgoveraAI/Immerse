@@ -15,7 +15,7 @@ class PinataV1:
 
         return cred["Pinata"]
 
-    def upload_file(self,path,cred,fn,pinataMetadata=dict()):
+    def upload_file(self,cred,path,fn,pinataMetadata=dict()):
 
         base_url = "https://api.pinata.cloud/pinning/pinFileToIPFS"
 
@@ -29,9 +29,10 @@ class PinataV1:
         
         payload = pinataMetadata
          
-                    # "pinataOptions": {
-                    #     "cidVersion": 1
-                    #     }
+        # data =  {"pinataOptions": {
+        #            "cidVersion": 1
+        #          }
+        #         }
         
 
         response = requests.post(base_url, headers=header,files=f_bytes,json=payload)
@@ -39,7 +40,7 @@ class PinataV1:
         return response.json(),response.status_code
     
     
-    def pin(self,cid,cred,fn=None):
+    def pin(self,cred,cid,fn=None):
 
         base_url = "https://api.pinata.cloud/pinning/pinByHash"
 
@@ -68,7 +69,7 @@ class PinataV1:
     
     
     #Appears in documentation, but invalid endpoint
-    def unpin(self,cid,cred):
+    def unpin(self,cred,cid):
 
         base_url = "https://api.pinata.cloud/pinning/unpin/"
 
@@ -85,7 +86,7 @@ class PinataV1:
     
     
     #Appears in documentation, but invalid endpoint
-    def edit_hash(self,cid,cred,fn=None,pinataMetaData=None):
+    def edit_hash(self,cred,cid,fn=None,pinataMetaData=None):
 
         base_url = "https://api.pinata.cloud/pinning/hashMetadata"
 
@@ -102,7 +103,7 @@ class PinataV1:
 
         return response.status_code
     
-    def pin_policy(self,cid,cred,region="NYC1",replications=2):
+    def pin_policy(self,cred,cid,region="NYC1",replications=2):
         
         """
         FRA1 - Frankfurt, Germany (max 2 replications)
