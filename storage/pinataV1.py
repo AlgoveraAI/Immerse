@@ -15,7 +15,7 @@ class PinataV1:
 
         return cred["Pinata"]
 
-    def upload_file(self,fn,cred):
+    def upload_file(self,path,cred,fn,pinataMetadata=dict()):
 
         base_url = "https://api.pinata.cloud/pinning/pinFileToIPFS"
 
@@ -25,29 +25,21 @@ class PinataV1:
                   }
 
 
-        f_bytes = {"file":(fn,open(fn,"rb"),'multipart/form-data')}
+        f_bytes = {"file":(fn,open(path,"rb"),'multipart/form-data')}
         
-        payload = {"metadata":
-                {"pinataMetadata": {
-                        "name": "name",
-                        "keyvalues": {
-                            "customKey": 'customValue',
-                            "customKey2": 'customValue2'
-                        }
-                    },
-                    "pinataOptions": {
-                        "cidVersion": 1
-                        }
-                    }
-                }
+        payload = pinataMetadata
+         
+                    # "pinataOptions": {
+                    #     "cidVersion": 1
+                    #     }
         
 
-        response = requests.post(base_url, headers=header,files=f_bytes,data=payload)
+        response = requests.post(base_url, headers=header,files=f_bytes,json=payload)
 
         return response.json(),response.status_code
     
     
-    def pin(self,fn,cid,cred):
+    def pin(self,cid,cred,fn=None):
 
         base_url = "https://api.pinata.cloud/pinning/pinByHash"
 
@@ -93,7 +85,7 @@ class PinataV1:
     
     
     #Appears in documentation, but invalid endpoint
-    def edit_hash(self,fn,cid,cred):
+    def edit_hash(self,cid,cred,fn=None,pinataMetaData=None):
 
         base_url = "https://api.pinata.cloud/pinning/hashMetadata"
 
@@ -102,19 +94,11 @@ class PinataV1:
                     "pinata_secret_api_key":cred["API Secret"]
                   }
         
-        data = {
-        "ipfsPinHash": cid,
-        "name": fn,
-        "keyvalues": {
-            "newKey": 'newValue',
-            "existingKey": 'newValue',
-            "existingKeyToRemove": None
-            }
-        }
+        data = pinataMetaData
     
 
 
-        response = requests.put(base_url, headers=header,data=data)
+        response = requests.put(base_url, headers=header,json=data)
 
         return response.status_code
     
