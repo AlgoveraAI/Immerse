@@ -1,27 +1,20 @@
-from io import StringIO
-import pandas as pd
-
-def read_file(b):
-
-    s=str(b,'utf-8')
-
-    data = StringIO(s) 
-
-    df=pd.read_csv(data)
-    
-    return df
-
 #https://docs.ipfs.io/reference/http/api/#getting-started
 import requests
 import random
 
 class IPFS:
     
+    def dht_get_file(self,cid):
+        
+        params = {"verbose":True}
+        
+        return requests.post(f"http://127.0.0.1:5001/api/v0/dht/get?arg={cid}",params)
+    
     def get_dht(self,peerID):
         
         params = {"verbose":True}
         
-        return requests.post(f"http://127.0.0.1:5001/api/v0/dht/query?arg={peerID}")
+        return requests.post(f"http://127.0.0.1:5001/api/v0/dht/query?arg={peerID}",params=params)
         
         
 
@@ -62,17 +55,27 @@ class IPFS:
             
         else:
             
-            
             #Sourced - All had green checkmarks as of 03/08/2022
             #https://ipfs.github.io/public-gateway-checker/
             gateways = ["https://infura-ipfs.io","https://cf-ipfs.com","https://dweb.link","https://astyanax.io"]
             
-            selected_gateway = gateways[random.randint(0,len(gateways)-1)]
+            random.shuffle(gateways)
             
+            log = []
             
-            response = requests.get(f"{selected_gateway}/ipfs/{cid}")
-            
+            for gateway in gateways:
 
-            print("Retrieved file hash",cid,f"from {selected_gateway}","Response",response.status_code)
+                response = requests.get(f"{gateway}/ipfs/{cid}")
+                
+                if response.status_code == 200:
+                                                            
+                    print("Retrieved file hash",cid,f"from {gateway}","Response",response.status_code)
+                    
+                    return response, log
+                    
+                    break
 
-        return response
+                    
+                log.append(gateway)
+
+        
