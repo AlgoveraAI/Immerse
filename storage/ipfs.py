@@ -44,7 +44,7 @@ class IPFS:
 
         return response
 
-    def get_file(self,cid,local_node=True):
+    def get_file(self,cid,local_node=False):
         params = (('arg', cid),)
         
         if local_node:
